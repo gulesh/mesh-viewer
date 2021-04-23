@@ -32,13 +32,26 @@ namespace agl {
       // Normals in this model
       float* normals() const;
 
+      // Texture in this model
+      float* textures() const;
+
       // Return number of faces in this model
       int numTriangles() const;
 
       // face indices in this model
       unsigned int* indices() const;
-
+   
+   private:
+   float* meshPositions;
+   float* meshNormals;
+   float* meshTextures;
+   unsigned int* meshIndices;
+   int verticesNum;
+   int trianglesNum;
+   glm::vec3 minVector = glm::vec3(0);
+   glm::vec3 maxVector = glm::vec3(0);
    };
+
 }
 
 #endif
