@@ -41,7 +41,7 @@ void main()
    float angle = max(dot(s, eNormal), 0.0);
    vec3 diffuse = uLight.lightIntensity * angle * uMaterial.Kd;
 
-   vec3 r = 2 * dot(s, eNormal) * eNormal - s; //reflected ray
+   vec3 r = reflect( -s, eNormal ); //reflected ray
    vec3 unitR = normalize(r);
    vec3 unitV = normalize(-ePos.xyz); //viewpos
    
