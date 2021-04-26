@@ -60,9 +60,9 @@ static void LoadModel(int modelId)
    // modelMatrix = theModel.positions();
 
    // //translation and scaling the model matrix
-   float scaleX = fabs(1.0f / (maxDimentions.x - minDimentions.x));
-   float scaleY = fabs(1.0f / (maxDimentions.y - minDimentions.y));
-   float scaleZ = fabs(1.0f / (maxDimentions.z - minDimentions.z));
+   float scaleX = fabs((maxDimentions.x - minDimentions.x));
+   float scaleY = fabs((maxDimentions.y - minDimentions.y));
+   float scaleZ = fabs((maxDimentions.z - minDimentions.z));
 
    float maxValueXY = std::max(scaleX, scaleY);
    float maxValueYZ = std::max(scaleX, scaleZ);
@@ -75,7 +75,7 @@ static void LoadModel(int modelId)
    // vec3 lookAt = 
    glm::mat4 scaled = glm::scale(glm::mat4(1.0f), glm::vec3(finalMax, finalMax, finalMax));
    glm::mat4 translated = glm::translate(glm::mat4(1.0f), glm::vec3(-centerX, -centerY, -centerZ));
-   modelMatrix = translated * scaled;
+   modelMatrix = scaled * translated;
 
    viewMatrix = glm::lookAt(vec3(0, 0, 22), vec3(0), vec3(0, 1, 0));
    // viewMatrix = translationView * camera;
@@ -358,20 +358,21 @@ int main(int argc, char **argv)
    GLuint mvmId = glGetUniformLocation(shaderId, "uMV");  //ModelViewMatrix
    GLuint nmvId = glGetUniformLocation(shaderId, "uNMV"); //NormalMAtrix
 
-   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ks"), 1.0, 1.0, 1.0);
-   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Kd"), 1.0, 1.0, 1.0);
+   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ks"), 0.45, 0.45, 0.45);
+   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Kd"), 0.45, 0.45, 0.45);
    glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ka"), 0.1, 0.1, 0.1);
    glUniform1f(glGetUniformLocation(shaderId, "uMaterial.Shininess"), 80.0);
 
    glUniform4f(glGetUniformLocation(shaderId, "uLight.position"), 100.0, 100.0, 100.0, 1.0);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.La"), 0.1, 0.1, 0.1);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ld"), 0.4, 0.7, 0.4);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ls"), 0.7, 0.8, 0.9);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.La"), 0.01, 0.01, 0.01);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ld"), 0.0, 0.0, 1.0);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ls"), 1.0, 1.0, 1.0);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.lightIntensity"), 1.0, 1.0, 1.0);
+
 
    // glClearColor(0, 0, 0, 1);
 
    glClearColor(1, 1, 1, 1);
-
 
    glm::vec3 lookfrom(0, 0, 22);
 

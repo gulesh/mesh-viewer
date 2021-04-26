@@ -11,6 +11,7 @@ struct ligthtInfo
    vec3 La;  //ambient light intensity 
    vec3 Ld;  // diffuse light intensity 
    vec3 Ls;  //specular light intensity 
+   vec3 lightIntensity;
 };
 
 struct materialInfo
@@ -34,24 +35,31 @@ void main()
    vec4 ePos = uMV * vec4(vPos, 1.0);
    vec4 temp = uMVP * vec4(vPos, 1.0);
 
-   vec3 ambient = uLight.La * uMaterial.Ka;
+   vec3 ambient = uLight.lightIntensity * uMaterial.Ka;
 
-   //vec3 s = normalize(uLight.position.xyz - ePos.xyz); //light source
-   //float angle = max(dot(s, eNormal), 0.0);
-   //vec3 diffuse = uLight.Ld * angle * uMaterial.Kd;
+   vec3 s = normalize(uLight.position.xyz - ePos.xyz); //light source
+   float angle = max(dot(s, eNormal), 0.0);
+   vec3 diffuse = uLight.lightIntensity * angle * uMaterial.Kd;
 
-   //vec3 r = 2 * dot(s, eNormal) * eNormal - s; //reflected ray
-   ///vec3 unitR = normalize(r);
-   //vec3 unitV = normalize(-ePos); //viewpos
-   //float cosPhi = dot(unitV, unitR); 
-   //float positivePhi = std::max(0.0f, cosPhi);
-   //vec3 specular = uLight.Ls * uMaterial.Ks * std::pow(positivePhi, uMaterial.shininess); 
-
-   //vec3 color = ambient + diffuse + specular;
+   vec3 r = 2 * dot(s, eNormal) * eNormal - s; //reflected ray
+   vec3 unitR = normalize(r);
+   vec3 unitV = normalize(-ePos.xyz); //viewpos
    
-   color = 0.5 * (temp.xyz + vec3(1));
-   //gl_Position = uMVP * vec4(vPos, 1.0);
-   gl_Position = vec4(vPos, 1.0);
+   float cosPhi = dot(unitV, unitR); 
+   float positivePhi = max(0.0f, cosPhi);
+   vec3 specular = vec3(0.0);
+   if(angle > 0.0)
+   {
+      specular = uLight.lightIntensity * uMaterial.Ks * pow(positivePhi, uMaterial.shininess); 
+   }
+
+   //color = ambient * diffuse * specular;
+   //color =  diffuse * specular;
+   //color = specular;
+   
+   color = 0.5 * (ambient + vec3(1));
+   gl_Position = uMVP * vec4(vPos, 1.0);
+   //gl_Position = vec4(vPos, 1.0);
 }
 
 
