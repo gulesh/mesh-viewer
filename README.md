@@ -42,7 +42,8 @@ mesh-viewer/build $ ../bin/mesh-viewer
 ## Simple Mesh
 1. **Pyramid using Triangles**
 
-![Uploading Screen Shot 2021-05-27 at 9.33.17 PM.png…]()
+<img width="496" alt="Screen Shot 2021-05-27 at 9 54 40 PM" src="https://user-images.githubusercontent.com/60520906/119918307-2b44cb00-bf36-11eb-8e1f-b20d56b05b49.png">
+
 
 
 2. **Adding zoom in and out Ferature and Rotation Feature** 
