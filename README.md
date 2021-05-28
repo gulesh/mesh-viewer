@@ -69,7 +69,7 @@ https://user-images.githubusercontent.com/60520906/119917119-e5870300-bf33-11eb-
 
 https://user-images.githubusercontent.com/60520906/119917520-b624c600-bf34-11eb-9fdc-2a77d9d9a84d.mov
 
-2. **Per - Vertex shader:changing models**
+2. **Per - Vertex shader:changing models** 
 
 
 https://user-images.githubusercontent.com/60520906/119918020-a8bc0b80-bf35-11eb-8ed0-8b780cecb25b.mov
