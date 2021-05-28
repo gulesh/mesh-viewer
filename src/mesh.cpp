@@ -13,6 +13,10 @@ using namespace agl;
 
 Mesh::Mesh()
 {
+   meshIndices = NULL;
+   meshPositions = NULL;
+   meshNormals = NULL;
+   meshTextures = NULL;
 }
 
 Mesh::~Mesh()
@@ -20,10 +24,13 @@ Mesh::~Mesh()
    delete[] meshIndices;
    delete[] meshPositions;
    delete[] meshNormals;
+   delete[] meshTextures;
 }
 
 bool Mesh::loadPLY(const std::string &filename)
 {
+   minVector = glm::vec3(999999.0f);
+   maxVector = glm::vec3(-9999999.0f);
    cout << filename << endl;
    ifstream file(filename);
    if (!file) // true if the file is valid
@@ -48,6 +55,12 @@ bool Mesh::loadPLY(const std::string &filename)
 
    verticesNum = stoi(value);
    cout << "vertices Num:  " << verticesNum << endl;
+
+   delete[] meshIndices;
+   delete[] meshPositions;
+   delete[] meshNormals;
+   delete[] meshTextures;
+
    meshPositions = new float[3 * verticesNum];
    meshNormals = new float[3 * verticesNum];
 

@@ -39,10 +39,9 @@ float changeX = 0;
 float changeY = 0;
 double scrollPosX = 0;
 double scrollPosY = 0;
-float Azimuth;
-float Elevation;
-
-float dist = 5.0;
+float dist = 1.0f;
+float Azimuth = 0.0f;
+float Elevation = 0.0f;
 
 // OpenGL IDs
 GLuint theVboPosId;
@@ -65,23 +64,23 @@ static void LoadModel(int modelId)
    float scaleZ = fabs((maxDimentions.z - minDimentions.z));
 
    float maxValueXY = std::max(scaleX, scaleY);
-   float maxValueYZ = std::max(scaleX, scaleZ);
-   float finalMax = std::max(maxValueXY, maxValueYZ);
+   float maxValueXZ = std::max(scaleX, scaleZ);
+   float finalMax = std::max(maxValueXY, maxValueXZ);
 
    float centerX = (maxDimentions.x + minDimentions.x) / 2;
    float centerY = (maxDimentions.y + minDimentions.y) / 2;
    float centerZ = (maxDimentions.z + minDimentions.z) / 2;
 
    // vec3 lookAt = 
-   glm::mat4 scaled = glm::scale(glm::mat4(1.0f), glm::vec3(finalMax, finalMax, finalMax));
+   glm::mat4 scaled = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f/finalMax, 1.0f/finalMax, 1.0f/finalMax));
    glm::mat4 translated = glm::translate(glm::mat4(1.0f), glm::vec3(-centerX, -centerY, -centerZ));
    modelMatrix = scaled * translated;
 
-   viewMatrix = glm::lookAt(vec3(0, 0, 22), vec3(0), vec3(0, 1, 0));
-   // viewMatrix = translationView * camera;
-   // modelMatrix  =  myTranslationmatrix * myScalingMatrix;// * theModel.positions();
-   // modelMatrix = glm::mat4(1.0f);
-   // modelMatrix  =   myTranslationmatrix;
+   // viewMatrix = glm::lookAt(vec3(0,0,1), vec3(0), vec3(0,1,0));
+   // // modelMatrix = scaled;
+   // cout << 20.0f/finalMax <<endl;
+
+   // viewMatrix = glm::lookAt(vec3(0, 0, 22), vec3(0), vec3(0, 1, 0));
 
    glBindBuffer(GL_ARRAY_BUFFER, theVboPosId);
    glBufferData(GL_ARRAY_BUFFER, theModel.numVertices() * 3 * sizeof(float), theModel.positions(), GL_DYNAMIC_DRAW);
@@ -196,6 +195,9 @@ static void cursor_position_callback(GLFWwindow *window, double xpos, double ypo
 
          Azimuth = Azimuth + .01 * changeX;
          Elevation = Elevation + changeY * .01;
+
+         // cout << Azimuth << endl;
+         // cout << Elevation << endl;
       }
    }
 }
@@ -349,33 +351,34 @@ int main(int argc, char **argv)
    GLuint shaderId = LoadShader("../shaders/phong.vs", "../shaders/phong.fs");
    glUseProgram(shaderId);
 
-   // viewMatrix = glm::lookAt(vec3(0,0,22), vec3(0), vec3(0,1,0));
-   // mat4 projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
-   // projectionMatrix = glm::perspective(glm::radians(60.0f), width/height, 0.1f, 2000.0f);
-   // modelMatrix = glm::mat4(1.0f);
-
+   //Per Vertex shader
    GLuint mvpId = glGetUniformLocation(shaderId, "uMVP"); //MVP
    GLuint mvmId = glGetUniformLocation(shaderId, "uMV");  //ModelViewMatrix
    GLuint nmvId = glGetUniformLocation(shaderId, "uNMV"); //NormalMAtrix
 
-   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ks"), 0.45, 0.45, 0.45);
+   glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ks"), 1.0, 1.0, 1.0);
    glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Kd"), 0.45, 0.45, 0.45);
    glUniform3f(glGetUniformLocation(shaderId, "uMaterial.Ka"), 0.1, 0.1, 0.1);
-   glUniform1f(glGetUniformLocation(shaderId, "uMaterial.Shininess"), 80.0);
+   glUniform1f(glGetUniformLocation(shaderId, "uMaterial.Shininess"), 80.0f);
 
-   glUniform4f(glGetUniformLocation(shaderId, "uLight.position"), 100.0, 100.0, 100.0, 1.0);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.La"), 0.01, 0.01, 0.01);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ld"), 0.0, 0.0, 1.0);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.Ls"), 1.0, 1.0, 1.0);
-   glUniform3f(glGetUniformLocation(shaderId, "uLight.lightIntensity"), 1.0, 1.0, 1.0);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.position"), 100.0, 100.0, 100.0);
+   glUniform3f(glGetUniformLocation(shaderId, "uLight.color"), 1.0, 1.0, 1.0);
+
+   //PerFragment Shader
+   // glUniform3f(glGetUniformLocation(shaderId, "Ks"), 0.45, 0.45, 0.45);
+   // glUniform3f(glGetUniformLocation(shaderId, "Kd"), 0.45, 0.45, 0.45);
+   // glUniform3f(glGetUniformLocation(shaderId, "Ka"), 0.1, 0.1, 0.1);
+   // glUniform1f(glGetUniformLocation(shaderId, "Shininess"), 80.0f);
+
+   // glUniform4f(glGetUniformLocation(shaderId, "uLightPosition"), 100.0, 100.0, 100.0, 1.0);
+   // glUniform3f(glGetUniformLocation(shaderId, "color"), 1.0, 1.0, 1.0);
 
 
-   // glClearColor(0, 0, 0, 1);
-
-   glClearColor(1, 1, 1, 1);
-
-   glm::vec3 lookfrom(0, 0, 22);
-
+   glClearColor(0, 0, 0, 1);
+   glm::vec3 lookfrom(0, 0, 1);
+   viewMatrix = glm::lookAt(lookfrom, vec3(0), vec3(0,1,0));
+   // projectionMatrix = glm::ortho(-2.0, 2.0, -2.0, 2.0, -2.0, 2.0);
+   projectionMatrix = glm::perspective(glm::radians(60.0f), (float)width / height, 0.01f, 100.0f);
    glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
    glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
 
@@ -390,13 +393,15 @@ int main(int argc, char **argv)
       lookfrom.z = dist * cos(Azimuth) * cos(Elevation);
       
       //setMVP
+      viewMatrix = glm::lookAt(lookfrom, vec3(0), vec3(0,1,0));
       mv = viewMatrix * modelMatrix;
+      
       glm::mat4 mvp = projectionMatrix * mv;
       mat3 nmv = mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2]));
 
       glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
       glUniformMatrix4fv(mvmId, 1, GL_FALSE, &mv[0][0]);
-      glUniformMatrix4fv(nmvId, 1, GL_FALSE, &nmv[0][0]);
+      glUniformMatrix3fv(nmvId, 1, GL_FALSE, &nmv[0][0]);
 
       // Draw primitive
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theElementbuffer);
@@ -410,5 +415,6 @@ int main(int argc, char **argv)
    }
 
    glfwTerminate();
+   system("leaks mesh-viewer");
    return 0;
 }
